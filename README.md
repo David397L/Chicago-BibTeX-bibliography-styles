@@ -1,4 +1,4 @@
-# Chicago-BibTeX-bibliography-styles
+# BibTeX-bibliography-styles
 
 chicago18ad.bst is a BibTeX bibliography style for the Chicago author-date (eighteenth edition) citation style.
 

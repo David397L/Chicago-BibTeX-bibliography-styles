@@ -992,7 +992,7 @@ FUNCTION {format.vol.num.month.pages}
           if$
         }
         { pages empty$
-                % M   % Most likely a news article
+                % M   % Most likely a news or magazine article
             { 
               comma space * month * 
             }
@@ -1019,12 +1019,12 @@ FUNCTION {format.vol.num.month.pages}
           if$
         }
         { pages empty$
-                % NM   % We have a number, so don't output the month
+                % NM   % Might be a news article, so we need the month
             { 
               bbl.nr number tie.or.space.connect
               space * month parenthesize *
             }
-                % NMP  % We have a number, so don't output the month
+                % NMP  % Might be a news article, so we need the month
             { 
               bbl.nr number tie.or.space.connect
               space * month parenthesize *
@@ -1079,12 +1079,12 @@ FUNCTION {format.vol.num.month.pages}
           if$
         }
         { pages empty$
-               % VNM   % We have a number, so don't output the month
+               % VNM   % We have volume and number, so don't output the month
             { 
               space * volume comma * space * 
               bbl.nr number tie.or.space.connect * 
             }
-               % VNMP  % We have a number, so don't output the month
+               % VNMP  % We have volume and number, so don't output the month
             { 
               space * volume space * number parenthesize * colon * space *
               format.pages * 
@@ -1154,7 +1154,7 @@ FUNCTION {format.vol.num.month.eid}
             { 
               "" 
             }
-                % NME  % We have a number, so don't output the month as well
+                % NME  % A news or magazine article with an eid?
             { 
               bbl.nr number tie.or.space.connect
               space * month parenthesize *
@@ -1211,7 +1211,7 @@ FUNCTION {format.vol.num.month.eid}
             { 
               "" 
             }
-               % VNME  % We have a number, so don't output the month
+               % VNME  % We have volume and number, so don't output the month
             { 
               space * volume space * number parenthesize * colon * space *
               format.eid *

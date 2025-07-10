@@ -1,8 +1,8 @@
 %%% ====================================================================
 %%%  @BibTeX-style-file{
 %%%     author          = "David Lamkin",
-%%%     version         = "B.01",
-%%%     date            = "28 June 2025",
+%%%     version         = "B.02",
+%%%     date            = "10 July 2025",
 %%%     filename        = "chicago18ad.bst",
 %%%     address         = "",
 %%%     checksum        = "",
@@ -30,7 +30,7 @@
 %%%  }
 %%% ====================================================================
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% BibTeX `chicago18ad' bibliography style (28-Jun-25 version)
+% BibTeX `chicago18ad' bibliography style (10-Jul-25 version)
 % An adaptation of the `apalike' style, for use with the natbib package.
 % Copyright (C) 2025, All rights reserved.
 % Copying of this file is allowed, provided that if you make any changes at all
@@ -56,11 +56,10 @@
 %   24-jan-88   (OP) Updated for BibTeX version 0.99a, from alpha.bst 0.99a;
 %               apalike now sorts by author, then year, then title;
 %               THIS `apalike' VERSION DOES NOT WORK WITH BIBTEX 0.98i.
-%   28-jun-25   Updated for Chicago author-date (18th edition), for BibTeX 0.99d.
+%   10-jul-25   Updated for Chicago author-date (18th edition), for BibTeX 0.99d.
 
 ENTRY
   { address
-    archive
     author
     booktitle
     chapter
@@ -69,7 +68,6 @@ ENTRY
     edition
     editor
     eid
-    eprint
     howpublished
     institution
     journal
@@ -395,7 +393,7 @@ FUNCTION {format.names}
 % and subsequent authors with first name followed by surname.
 % All names are formatted in this routine.
 % Include the names of up to six authors in the list.
-% If there are more than six, list the first three, followed by "et al.".
+% If there are more than six, list the first three, followed by "et al."
 %
 { 'bibinfo :=
   duplicate$ empty$ 'skip$ {
@@ -593,42 +591,25 @@ FUNCTION {format.serieseditors}
   mid.sentence 'output.state :=
 }
 
-FUNCTION {format.eprint}
-%
-% Work in progress: improve in a future release so
-% as to process prefix and class fields properly
-%
-{ eprint duplicate$ empty$
-    'skip$
-    { "\eprint"
-      archive empty$
-        'skip$
-        { "[" * archive * "]" * }
-      if$
-      "{" * swap$ * "}" *
-    }
-  if$
-}
-
 FUNCTION {urldate.check}
 { lastchecked empty$
     { urldate empty$
         { "" }
-        { " [Accessed " urldate * "]" * add.period$ add.blank }
+        { bbl.accessed capitalize " " * urldate * add.period$ }
       if$
     }
-    { " [Accessed " lastchecked * "]" * add.period$ add.blank }
+    { bbl.accessed capitalize " " * lastchecked * add.period$ }
   if$
 }
 
 FUNCTION {format.doi.or.url}
 %
-% Includes the DOI if available, or else the URL
+% Include the DOI if available, or else the URL.
 %
 { doi empty$
-    { url empty$
-        { "" }
-        { urldate.check * "\url{" url * "}" * }
+    { url duplicate$ empty$
+        { pop$ "" }
+        { urldate.check " " * "\url{" * swap$ * "}" * }
       if$
     }
     { "\doi{" doi * "}" * }
@@ -787,7 +768,7 @@ FUNCTION {format.btitle}
       if$
       }
     if$
-   }
+    }
   if$
 }
 
@@ -1552,7 +1533,7 @@ FUNCTION {mastersthesis}
   format.date "year" output.check
   new.block
   format.title "title" output.check
-  add.blank
+  end.quote.title
   bbl.mthesis format.thesis.type output.nonnull
   school "school" output.check
   new.sentence
@@ -1570,14 +1551,12 @@ FUNCTION {misc}
   format.month output
   new.block
   url empty$
-    { format.title.plain output }
+    { format.title.plain "title" output.check }
     { format.title "title" output.check
       end.quote.title }
   if$ 
   new.sentence
   howpublished output
-  new.sentence
-  format.eprint output
   new.sentence
   note output
   new.sentence
@@ -1592,7 +1571,7 @@ FUNCTION {phdthesis}
   format.date "year" output.check
   new.block
   format.title "title" output.check
-  add.blank
+  end.quote.title
   bbl.phdthesis format.thesis.type output.nonnull
   school "school" output.check
   new.sentence
@@ -1653,7 +1632,6 @@ FUNCTION {unpublished}
   new.block
   format.title "title" output.check
   end.quote.title
-  format.eprint output
   note "note" output.check
   new.sentence
   format.doi.or.url output
@@ -1974,10 +1952,6 @@ FUNCTION {begin.bib}
   write$ newline$
   "\providecommand{\doi}[1]{\normalfont{#1}}"
   write$ newline$
-  "\providecommand{\eprint}[2][]{\url{#2}}"
-  write$ newline$
-  "\expandafter\ifx\csname eprint\endcsname\relax\def\eprint#1{\url{#1}}\fi"
-  write$ newline$	
 }
 
 EXECUTE {begin.bib}

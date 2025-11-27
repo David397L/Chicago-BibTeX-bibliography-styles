@@ -1,8 +1,8 @@
 %%% ====================================================================
 %%%  @BibTeX-style-file{
 %%%     author          = "David Lamkin",
-%%%     version         = "B.02",
-%%%     date            = "10 July 2025",
+%%%     version         = "B.03",
+%%%     date            = "27 November 2025",
 %%%     filename        = "chicago18ad.bst",
 %%%     address         = "",
 %%%     checksum        = "",
@@ -12,7 +12,7 @@
 %%%                        less in Chicago author-date (eighteenth 
 %%%                        edition) format. 
 %%%                        It incorporates features of Glenn Paulley's 
-%%%                        chicago.bst, Matt Swift's achicago.bst and
+%%%                        chicago.bst, Matt Swift's achicago.bst and 
 %%%                        Patrick W. Daly and Arthur Ogawa's merlin.mbs".
 %%%
 %%%     Usage: The preamble of the .tex document has to contain at least:
@@ -29,10 +29,10 @@
 %%%     numbers to doi.org and output the appropriate text prefix. 
 %%%  }
 %%% ====================================================================
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% BibTeX `chicago18ad' bibliography style (10-Jul-25 version)
-% An adaptation of the `apalike' style, for use with the natbib package.
-% Copyright (C) 2025, All rights reserved.
+%
+% BibTeX `chicago18ad' bibliography style (27-Nov-25 version)
+% An adaptation of the `plainnat' style, for use with the natbib package.
+% Copyright (C) 2025, all rights reserved.
 % Copying of this file is allowed, provided that if you make any changes at all
 % you name it something other than `chicago18ad.bst'. 
 % This restriction helps ensure that all copies are identical.
@@ -49,14 +49,6 @@
 % after the author. A `year' field is required for every entry, and so is 
 % either an author (or an editor) field or a key field.
 %
-% History:
-%   15-sep-86   (SK,OP) Original version, by Susan King and Oren Patashnik.
-%   10-nov-86   (OP) Truncated the sort.key$ string to the correct length
-%               in bib.sort.order to eliminate error message.
-%   24-jan-88   (OP) Updated for BibTeX version 0.99a, from alpha.bst 0.99a;
-%               apalike now sorts by author, then year, then title;
-%               THIS `apalike' VERSION DOES NOT WORK WITH BIBTEX 0.98i.
-%   10-jul-25   Updated for Chicago author-date (18th edition), for BibTeX 0.99d.
 
 ENTRY
   { address
@@ -91,7 +83,7 @@ ENTRY
     year
   }
   {}
-  { label extra.label sort.label }
+  { label extra.label sort.label short.list }
 
 INTEGERS { output.state before.all mid.sentence after.sentence after.block }
 
@@ -208,11 +200,8 @@ FUNCTION {emphasize}
 
 FUNCTION {parenthesize}
 { duplicate$ empty$
-    { pop$
-      ""
-    }
-    { "(" swap$ * ")" *
-    }
+    { pop$ "" }
+    { "(" swap$ * ")" * }
   if$
 }
 
@@ -439,15 +428,15 @@ FUNCTION {format.names}
       nameptr #1 + 'nameptr :=
       namesleft #1 - 'namesleft :=
     }
-  while$
-  } if$
+   while$
+   }
+ if$
 }
 
 FUNCTION {format.names.firstfirst}
 %
 % Format names with first name followed by surname every time.
 % Like format.names, ALL names are formatted.
-% Should there be an upper limit to the number of names included here?
 %
 { 'bibinfo :=
   duplicate$ empty$ 'skip$ {
@@ -486,7 +475,8 @@ FUNCTION {format.names.firstfirst}
       namesleft #1 - 'namesleft :=
     }
   while$
-  } if$
+  } 
+ if$
 }
 
 FUNCTION {format.authors}
@@ -618,7 +608,7 @@ FUNCTION {format.doi.or.url}
 
 FUNCTION {format.title.plain}
 %
-% Format a title without quotation marks, if required.
+% Format a title without quotation marks.
 %
 { title empty$
     { "" }
@@ -641,13 +631,113 @@ FUNCTION {format.title}
 
 FUNCTION {end.quote.title}
 %
-% Completes quotation marks around title, including punctuation mark
-% (in place of a new.block).
+% Completes quotation marks around title, including
+% punctuation mark (in place of a new.block).
 %
 { title empty$
     'skip$
     { before.all 'output.state := }
   if$
+}
+
+FUNCTION {format.full.names}
+{'s :=
+ "" 't :=
+  #1 'nameptr :=
+  s num.names$ 'numnames :=
+  numnames 'namesleft :=
+    { namesleft #0 > }
+    { s nameptr
+      "{vv~}{ll}" format.name$
+      't :=
+      nameptr #1 >
+        { nameptr #3
+          #1 + =
+          numnames #6
+          > and
+            { "others" 't :=
+              #1 'namesleft := }
+            'skip$
+          if$
+          namesleft #1 >
+            { ", " * t * }
+            { s nameptr "{ll}" format.name$ duplicate$ "others" =
+                { 't := }
+                { pop$ }
+              if$
+              t "others" =
+                { " " * bbl.etal * }
+                { numnames #2 >
+                    { "," * }
+                    'skip$
+                  if$
+                  bbl.and
+                  space.word * t *
+                }
+              if$
+            }
+          if$
+        }
+        't
+      if$
+      nameptr #1 + 'nameptr :=
+      namesleft #1 - 'namesleft :=
+    }
+  while$
+}
+
+FUNCTION {author.editor.full}
+{ author empty$
+    { editor empty$
+        { "" }
+        { editor format.full.names }
+      if$
+    }
+    { author format.full.names }
+  if$
+}
+
+FUNCTION {author.full}
+{ author empty$
+    { "" }
+    { author format.full.names }
+  if$
+}
+
+FUNCTION {editor.full}
+{ editor empty$
+    { "" }
+    { editor format.full.names }
+  if$
+}
+
+FUNCTION {make.full.names}
+{ type$ "book" =
+  type$ "inbook" =
+  or
+    'author.editor.full
+    { type$ "proceedings" =
+        'editor.full
+        'author.full
+      if$
+    }
+  if$
+}
+
+FUNCTION {output.bibitem}
+{ newline$
+  "\bibitem[" write$
+  label write$
+  ")" make.full.names duplicate$ short.list =
+     { pop$ }
+     { * }
+   if$
+  "]{" * write$
+  cite$ write$
+  "}" write$
+  newline$
+  ""
+  before.all 'output.state :=
 }
 
 FUNCTION {n.dashify}
@@ -982,11 +1072,11 @@ FUNCTION {format.vol.num.month.pages}
               space * month parenthesize colon * space * format.pages *
             }
           if$
-        }
+          }
         if$
-      }
-	    { month empty$
-		{ pages empty$
+        }
+        { month empty$
+        { pages empty$
                 % N
             { 
               "number but no volume, month, pages or eid in " cite$ * warning$   
@@ -1101,10 +1191,10 @@ FUNCTION {format.vol.num.month.eid}
                 % E
             { "eid but no volume, number or month in " cite$ * warning$
               ": " format.eid *
-			}
+		}
           if$
-		 }
-		 { eid empty$
+	 }
+	 { eid empty$
                 % M
             { 
               "" 
@@ -1117,8 +1207,8 @@ FUNCTION {format.vol.num.month.eid}
         }
         if$
       }
-	    { month empty$
-		{ eid empty$
+    { month empty$
+	{ eid empty$
                 % N   % Warning output by format.vol.num.month.pages
             { 
               "" 
@@ -1240,9 +1330,13 @@ FUNCTION {format.in.ed.booktitle}
 }
 
 FUNCTION {empty.misc.check}
-{ author empty$ title empty$ howpublished empty$
+%
+% Since we have added editor to FUNCTION {misc} ...
+% we need to add that to the list of fields here.
+%
+{ author empty$ editor empty$ title empty$ howpublished empty$
   month empty$ year empty$ note empty$
-  and and and and and
+  and and and and and and
   key empty$ not and
     { "all relevant fields are empty in " cite$ * warning$ }
     'skip$
@@ -1302,26 +1396,27 @@ FUNCTION {format.month}
 { month empty$
     { "" }
     { month "month" bibinfo.check
-    "" swap$ * "" *}
+    "" swap$ * "" * }
   if$
 }
 
-FUNCTION {output.bibitem}
-{ newline$
-  "\bibitem[" write$
-  label write$
-  "]{" write$
-  cite$ write$
-  "}" write$
-  newline$
-  ""
-  before.all 'output.state :=
-}
-
 FUNCTION {article}
+%
+% Includes "author or editor" routine to enable citing 
+% a special issue/section of a journal by its editor(s).
+%
 { output.bibitem
-  format.authors "author" output.check
-  author format.key output
+  author empty$
+    { format.editors "author and editor" output.check
+      editor format.key output
+    }
+    { format.authors output.nonnull
+      crossref missing$
+        { "author and editor" editor either.or.check }
+        'skip$
+      if$
+    }
+  if$
   format.date "year" output.check
   new.block
   format.title "title" output.check
@@ -1349,6 +1444,14 @@ FUNCTION {article}
   format.doi.or.url output
   fin.entry
 }
+
+FUNCTION {magazine} { article }
+%
+% Allow @magazine as an alias for @article
+
+FUNCTION {newspaper} { article }
+%
+% Allow @newspaper as an alias for @article
 
 FUNCTION {book}
 { output.bibitem
@@ -1511,14 +1614,19 @@ FUNCTION {conference} { inproceedings }
 
 FUNCTION {manual}
 { output.bibitem
-  format.authors output
-  author format.key output
+  author empty$
+    { organization empty$
+        { author format.key output }
+        { organization output.nonnull }
+      if$
+    }
+    { format.authors output.nonnull }
+  if$
   format.date "year" output.check
   new.block
   format.btitle "title" output.check
   new.sentence
   organization output
-%  address output
   new.sentence
   note output
   new.sentence
@@ -1544,11 +1652,25 @@ FUNCTION {mastersthesis}
 }
 
 FUNCTION {misc}
+%
+% Includes optional "author or editor" routine 
+% to enable citing an item by its editor(s)
+%
 { output.bibitem
-  format.authors output
+  author empty$
+    { editor empty$
+        'skip$  % author and editor both optional
+        { format.editors output.nonnull }
+      if$
+    }
+    { editor empty$
+        { format.authors output.nonnull }
+        { "can't use both author and editor fields in " cite$ * warning$ }
+      if$
+    }
+  if$
   author format.key output
   format.date "year" output.check
-  format.month output
   new.block
   url empty$
     { format.title.plain "title" output.check }
@@ -1557,12 +1679,17 @@ FUNCTION {misc}
   if$ 
   new.sentence
   howpublished output
+  format.month output
   new.sentence
   note output
   new.sentence
   format.doi.or.url output
   fin.entry
 }
+
+FUNCTION {webpage} { misc }
+%
+% Allow @webpage as an alias for @misc
 
 FUNCTION {phdthesis}
 { output.bibitem
@@ -1583,8 +1710,11 @@ FUNCTION {phdthesis}
 
 FUNCTION {proceedings}
 { output.bibitem
-  format.editors output
-  editor format.key output
+  editor empty$
+    { organization output
+      organization format.key output }
+    { format.editors output.nonnull }
+  if$
   format.date "year" output.check
   new.block
   format.btitle "title" output.check
@@ -1695,6 +1825,7 @@ FUNCTION {chop.word}
 
 FUNCTION {format.lab.names}
 { 's :=
+  "" 't :=
   s #1 "{vv~}{ll}" format.name$
   s num.names$ duplicate$
   #2 >
@@ -1748,24 +1879,88 @@ FUNCTION {editor.key.label}
   if$
 }
 
-FUNCTION {calc.label}
-{ type$ "book" =
-  type$ "inbook" =
+FUNCTION {author.key.organization.label}
+%
+% Provide label formatting by key if author is null,
+% or by organization if key is also null.
+%
+{ author empty$
+    { key empty$
+        { organization empty$
+            { "no author, key or organization in " cite$ * warning$
+              cite$ #1 #3 substring$ }
+            { organization }
+          if$
+        }
+        'key
+      if$
+    }
+    { author format.lab.names }
+  if$
+}
+
+FUNCTION {editor.key.organization.label}
+%
+% Provide label formatting by key if editor is null,
+% or by organization if key is also null.
+%
+{ editor empty$
+    { key empty$
+        { organization empty$
+            { "no editor, key or organization in " cite$ * warning$
+              cite$ #1 #3 substring$ }
+            { organization }
+          if$
+        }
+        'key
+      if$
+    }
+    { editor format.lab.names }
+  if$
+}
+
+FUNCTION {calc.short.authors}
+%
+% Includes alias entry types "magazine", "newspaper" and "webpage",
+% and "article" and "misc" which have had an editor option added.
+%
+{ type$ "article" =
+   type$ "book" =
+    type$ "inbook" =
+     type$ "magazine" =
+      type$ "misc" =
+       type$ "newspaper" =
+        type$ "webpage" =
+       or
+      or
+     or
+    or
+   or
   or
     'author.editor.key.label
     { type$ "proceedings" =
-        'editor.key.label
-        'author.key.label
-      if$
-    }
+    'editor.key.organization.label
+       { type$ "manual" =
+          'author.key.organization.label
+          'author.key.label
+        if$
+       }
+     if$
+    }  
   if$
+  'short.list :=
+}
+
+FUNCTION {calc.label}
+{ calc.short.authors
+  short.list
   "("
   *
   year duplicate$ empty$
-    { pop$ "{n.d.}" }
-    'skip$
+     { pop$ "{n.d.}" }
+     'skip$
   if$
-  *                 % the matching closing ")" comes in at reverse.pass
+  *
   'label :=
 }
 
@@ -1776,13 +1971,22 @@ FUNCTION {sort.format.names}
   s num.names$ 'numnames :=
   numnames 'namesleft :=
     { namesleft #0 > }
-    { nameptr #1 >
-        { "   " * }
-        'skip$
-      if$	
-      s nameptr "{vv{ } }{ll{ }}{  ff{ }}{  jj{ }}" format.name$ 't := 
-      nameptr numnames = t "others" = and
-        { bbl.etal * }
+    { s nameptr "{vv{ } }{ll{ }}{  ff{ }}{  jj{ }}" format.name$ 't :=
+      nameptr #1 >
+        { nameptr #3
+          #1 + =
+          numnames #6
+          > and
+            { "others" 't :=
+              #1 'namesleft := }
+            'skip$
+          if$
+          "   "  *
+          namesleft #1 = t "others" = and
+            { "zzzzz" * }
+            { t sortify * }
+          if$
+        }
         { t sortify * }
       if$
       nameptr #1 + 'nameptr :=
@@ -1823,7 +2027,7 @@ FUNCTION {author.editor.sort}
               ""
             }
             { key sortify }
-            if$
+          if$
         }
         { editor sort.format.names }
       if$
@@ -1845,18 +2049,70 @@ FUNCTION {editor.sort}
   if$
 }
 
+FUNCTION {author.organization.sort}
+{ author empty$
+    { organization empty$
+        { key empty$
+            { "to sort, need author, organization, or key in " cite$ * warning$
+              ""
+            }
+            { key sortify }
+          if$
+        }
+        { "The " #4 organization chop.word sortify }
+      if$
+    }
+    { author sort.format.names }
+  if$
+}
+
+FUNCTION {editor.organization.sort}
+{ editor empty$
+    { organization empty$
+        { key empty$
+            { "to sort, need editor, organization, or key in " cite$ * warning$
+              ""
+            }
+            { key sortify }
+          if$
+        }
+        { "The " #4 organization chop.word sortify }
+      if$
+    }
+    { editor sort.format.names }
+  if$
+}
+
 FUNCTION {presort}
+%
+% Includes alias entry types "magazine", "newspaper" and "webpage",
+% and "article" and "misc" which have had an editor option added.
+%
 { calc.label
   label sortify
   "    "
   *
-  type$ "book" =
-  type$ "inbook" =
+  type$ "article" =
+   type$ "book" =
+    type$ "inbook" =
+     type$ "magazine" =
+      type$ "misc" =
+       type$ "newspaper" =
+        type$ "webpage" =
+       or
+      or
+     or
+    or
+   or
   or
     'author.editor.sort
     { type$ "proceedings" =
-        'editor.sort
-        'author.sort
+        'editor.organization.sort
+        { type$ "manual" =
+            'author.organization.sort
+            'author.sort
+          if$
+        }
       if$
     }
   if$
@@ -1879,12 +2135,13 @@ SORT
 
 STRINGS { last.label next.extra }
 
-INTEGERS { last.extra.num }
+INTEGERS { last.extra.num number.label }
 
 FUNCTION {initialize.extra.label.stuff}
 { #0 int.to.chr$ 'last.label :=
   "" 'next.extra :=
   #0 'last.extra.num :=
+  #0 'number.label :=
 }
 
 FUNCTION {forward.pass}
@@ -1897,6 +2154,7 @@ FUNCTION {forward.pass}
       label 'last.label :=
     }
   if$
+  number.label #1 + 'number.label :=
 }
 
 FUNCTION {reverse.pass}
@@ -1911,7 +2169,7 @@ FUNCTION {reverse.pass}
     { "{\natexlab{" swap$ * "}}" * }
   if$
   'extra.label :=
-  label extra.label * ")" * 'label :=
+  label extra.label * 'label :=
 }
 
 EXECUTE {initialize.extra.label.stuff}
@@ -1944,7 +2202,7 @@ FUNCTION {begin.bib}
     'skip$
     { preamble$ write$ newline$ }
   if$
-  "\begin{thebibliography}{}" 
+  "\begin{thebibliography}{" number.label int.to.str$ * "}" *
   write$ newline$
   "\providecommand{\natexlab}[1]{#1}"	
   write$ newline$

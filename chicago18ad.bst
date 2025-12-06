@@ -1,8 +1,8 @@
 %%% ====================================================================
 %%%  @BibTeX-style-file{
 %%%     author          = "David Lamkin",
-%%%     version         = "B.03",
-%%%     date            = "27 November 2025",
+%%%     version         = "B.04",
+%%%     date            = "5 December 2025",
 %%%     filename        = "chicago18ad.bst",
 %%%     address         = "",
 %%%     checksum        = "",
@@ -30,7 +30,7 @@
 %%%  }
 %%% ====================================================================
 %
-% BibTeX `chicago18ad' bibliography style (27-Nov-25 version)
+% BibTeX `chicago18ad' bibliography style (05-Dec-25 version)
 % An adaptation of the `plainnat' style, for use with the natbib package.
 % Copyright (C) 2025, all rights reserved.
 % Copying of this file is allowed, provided that if you make any changes at all
@@ -39,7 +39,8 @@
 %
 % This style should be used with the `natbib' LaTeX style (natbib.sty).
 % The form of the \bibitem entries is
-%   \bibitem[Jones et al(1990)]{key}...
+%   \bibitem[Jones et al.(1990)]{key}...
+%   \bibitem[Jones et al.(1990)Jones, Baker and Smith]{key}...
 % The essential feature is that the label (the part in brackets) consists
 % of the author names, as they should appear in the citation, with the year
 % in parentheses following. There must be no space before the opening
@@ -647,8 +648,7 @@ FUNCTION {format.full.names}
   s num.names$ 'numnames :=
   numnames 'namesleft :=
     { namesleft #0 > }
-    { s nameptr
-      "{vv~}{ll}" format.name$
+    { s nameptr "{vv~}{ll}" format.name$
       't :=
       nameptr #1 >
         { nameptr #3
@@ -712,6 +712,9 @@ FUNCTION {editor.full}
 }
 
 FUNCTION {make.full.names}
+%
+% Include the extended list of entry types here?
+%
 { type$ "book" =
   type$ "inbook" =
   or
@@ -1116,7 +1119,7 @@ FUNCTION {format.vol.num.month.pages}
             }
                % VP
             { 
-              space * volume colon * format.pages *
+              space * volume colon * space * format.pages *
             }
           if$
         }
@@ -1319,19 +1322,19 @@ FUNCTION {format.booktitle}
 
 FUNCTION {format.in.ed.booktitle}
 { booktitle empty$
-  { "" }
-  { editor empty$
-    { word.in format.emphasize.booktitle * }
-    { word.in * format.emphasize.booktitle * ", " bbl.edby * 
-      " " * format.editors.firstfirst * }
-    if$
-  }
+    { "" }
+    { editor empty$
+        { word.in format.emphasize.booktitle * }
+        { word.in * format.emphasize.booktitle * ", " bbl.edby * 
+          " " * format.editors.firstfirst * }
+      if$
+    }
   if$
 }
 
 FUNCTION {empty.misc.check}
 %
-% Since we have added editor to FUNCTION {misc} ...
+% Since we are adding editor to FUNCTION {misc} ...
 % we need to add that to the list of fields here.
 %
 { author empty$ editor empty$ title empty$ howpublished empty$
@@ -1387,7 +1390,7 @@ FUNCTION {format.incoll.inproc.crossref}
 
 FUNCTION {format.conference.address} 
 %
-% For use in {inproceedings} and {proceedings}
+% Occurs in {inproceedings} and {proceedings}
 %
 { address "address" bibinfo.check
 }
@@ -1710,11 +1713,8 @@ FUNCTION {phdthesis}
 
 FUNCTION {proceedings}
 { output.bibitem
-  editor empty$
-    { organization output
-      organization format.key output }
-    { format.editors output.nonnull }
-  if$
+  format.editors output
+  editor format.key output
   format.date "year" output.check
   new.block
   format.btitle "title" output.check
@@ -1868,17 +1868,6 @@ FUNCTION {author.editor.key.label}
   if$
 }
 
-FUNCTION {editor.key.label}
-{ editor empty$
-    { key empty$
-        { cite$ #1 #3 substring$ }
-        'key	
-      if$
-    }
-    { editor format.lab.names }
-  if$
-}
-
 FUNCTION {author.key.organization.label}
 %
 % Provide label formatting by key if author is null,
@@ -1921,21 +1910,21 @@ FUNCTION {editor.key.organization.label}
 
 FUNCTION {calc.short.authors}
 %
-% Includes alias entry types "magazine", "newspaper" and "webpage",
-% and "article" and "misc" which have had an editor option added.
+% Includes "article" and "misc" which have had an editor option added,
+% and alias entry types "magazine", "newspaper" and "webpage".
 %
 { type$ "article" =
-   type$ "book" =
-    type$ "inbook" =
-     type$ "magazine" =
-      type$ "misc" =
-       type$ "newspaper" =
-        type$ "webpage" =
-       or
+    type$ "book" =
+      type$ "inbook" =
+        type$ "magazine" =
+          type$ "misc" =
+            type$ "newspaper" =
+              type$ "webpage" =
+            or
+          or
+        or
       or
-     or
     or
-   or
   or
     'author.editor.key.label
     { type$ "proceedings" =
@@ -2036,19 +2025,6 @@ FUNCTION {author.editor.sort}
   if$
 }
 
-FUNCTION {editor.sort}
-{ editor empty$
-    { key empty$
-        { "to sort, need editor or key in " cite$ * warning$
-          ""
-        }
-        { key sortify }
-      if$
-    }
-    { editor sort.format.names }
-  if$
-}
-
 FUNCTION {author.organization.sort}
 { author empty$
     { organization empty$
@@ -2085,25 +2061,25 @@ FUNCTION {editor.organization.sort}
 
 FUNCTION {presort}
 %
-% Includes alias entry types "magazine", "newspaper" and "webpage",
-% and "article" and "misc" which have had an editor option added.
+% Includes "article" and "misc" which have had an editor option added,
+% and alias entry types "magazine", "newspaper" and "webpage".
 %
 { calc.label
   label sortify
   "    "
   *
   type$ "article" =
-   type$ "book" =
-    type$ "inbook" =
-     type$ "magazine" =
-      type$ "misc" =
-       type$ "newspaper" =
-        type$ "webpage" =
-       or
+    type$ "book" =
+      type$ "inbook" =
+        type$ "magazine" =
+          type$ "misc" =
+            type$ "newspaper" =
+              type$ "webpage" =
+            or
+          or
+        or
       or
-     or
     or
-   or
   or
     'author.editor.sort
     { type$ "proceedings" =

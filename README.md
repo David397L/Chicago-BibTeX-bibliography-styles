@@ -9,7 +9,7 @@ This is the most recent (2024) edition of the Chicago manual of style.
 
 My intention then is to carry on and implement the manual in full, or as far as reasonably possible.
 
-I'm aware that some publications may request a Chicago author-date format without quotation marks around the titles of journal articles, book chapters, etc., and for these titles in Sentence case instead of Title Case. Nor have I overlooked the "notes and bibliography" version entirely. To that end, feedback and suggestions are always welcome. 
+I'm aware that some publications may request a Chicago author-date format without quotation marks around the titles of journal articles, book chapters, etc., and for these titles in Sentence case instead of Title Case. To that end, feedback and suggestions are always welcome. 
 
 So, if you do use this file, please consider giving me a star if you liked the results, or let me know if you didn't. If you would like to develop anything further, please make a pull request.
 

@@ -6,8 +6,41 @@
 % is unmodified. Modifications (and their redistribution) are also
 % permitted, as long as the resulting file is renamed.
 %
+% Please note: although I recommend using only the standard entry
+% types, I have tried to configure chicago18ad.bst to accept some 
+% non-standard entries and handle them (more or less) appropriately,
+% so that a database prepared using those entry types can be used
+% as they are, without the need to spend time changing them.
+% Some examples of this can be seen in what follows.
+%
 
-@BOOK{BiKi22,
+@manual{APA10,
+  author = {{American Psychological Association}},
+  organization = {American Psychological Association},
+  year = 2010,
+  title = {Publication Manual of the {A}merican {P}sychological {A}ssociation},
+  edition = 6,
+  address = {Washington, DC}
+  }
+
+@webpage{apastyle,
+  url = {http://www.apastyle.org/elecref.html},
+  editor = {{American Psychological Association}},
+  title = {Electronic References},
+  year = 2001,
+  lastchecked = {23 October 2002},
+  note = {Excerpted from 5th edition of the APA Publication Manual}
+}
+
+@newspaper{Ber00,
+  author = {Berkowitz, A. D.},
+  year = 2000,
+  month = nov # "~24",
+  title = {How to Tackle the Problem of Student Drinking [Letter to the Editor]},
+  journal = {The Chronicle of Higher Education}
+  }
+
+@book{BiKi22,
   author = {Binder, Amy J. and Kidder, Jeffrey L.},
   title = {The Channels of Student Activism: How the {L}eft and {R}ight Are Winning (and Losing) in Campus Politics Today},
   year = 2022,
@@ -15,7 +48,7 @@
   publisher = {University of Chicago Press}
   }
 
-@PHDTHESIS{Bla19,
+@phdthesis{Bla19,
   author = {Blajer de la Garza, Yuna},
   year = 2019,
   title = {A House Is Not a Home: Citizenship and Belonging in Contemporary Democracies},
@@ -23,7 +56,7 @@
   note = {ProQuest (13865986)}
   }
 
-@ARTICLE{Blu23,
+@article{Blu23,
   author = {Blum, Dani},
   year = 2023,
   title = {Are Flax Seeds All That?},
@@ -32,7 +65,7 @@
   url = {https://www.nytimes.com/2023/12/13/well/eat/flax-seeds.benefits.html}
   }
 
-@BOOK{Bor23,
+@book{Bor23,
   author = {Borel, Brooke},
   title = {The {C}hicago Guide to Fact-Checking},
   edition = 2,
@@ -42,15 +75,31 @@
   year = 2023
   }
 
-@MISC{Buo23,
+@article{BriIP,
+  author = {Briscoe, R.},
+  year = {In press},
+  title = {Egocentric Spatial Representation in Action and Perception},
+  journal = {Philosophy and Phenomenological Research},
+  url = {http://cogprints.org/5780/1/ECSRAP.F07.pdf}
+  }
+
+@manual{bsi85,
+  key = {BSI},
+  year = 1985,
+  title = {Specification for Abbreviation of Title Words and Titles of Publications},
+  address = {London},
+  organization = {British Standards Institution}
+  }
+
+@misc{Buo23,
   author = {Buolamwini, Joy},
   year = 2023,
-  title = {`If You Have a Face, You Have a Place in the Conversation About AI', Expert Says},
+  title = {`If You Have a Face, You Have a Place in the Conversation About {AI}', Expert Says},
   howpublished = {Interview by Tonya Mosley. \emph{Fresh Air}, NPR, November 28. Audio, 37:58},
   url = {https://www.npr.org/2023/11/28/1215529902/unmasking-ai-facial-recognition-technology-joy-buolamwini}
   }
 
-@MISC{Chi15,
+@misc{Chi15,
   author = {{Chicago Manual of Style}},
   year = 2015,
   title = {Is the world ready for singular they? {W}e thought so back in 1993},
@@ -59,7 +108,16 @@
   url = {https://www.facebook.com/ChicagoManual/posts/10152906193679151}
   }
 
-@MISC{Cow22,
+@manual{Chi24,
+  title = {The {C}hicago Manual of Style: The Essential Guide for Writers, Editors, and Publishers},
+  year = 2024,
+  edition = 18,
+  address = {Chicago, IL},
+  organization = {University of Chicago Press},
+  url = {https://www.chicagomanualofstyle.org/home.html}
+  }
+
+@misc{Cow22,
   author = {Cowan, Vaitea},
   year = 2022,
   title = {How Green Hydrogen Could End the Fossil Fuel Era},
@@ -67,7 +125,7 @@
   url = {https://www.ted.com/talks/vaitea\_cowan\_how\_green\_hydrogen\_could\_end\_the\_fossil\_fuel\_era}
   }
 
-@ARTICLE{DiSc23,
+@article{DiSc23,
   author = {Dittmar, Emily L. and Schemske, Douglas W.},
   year = 2023,
   title = {Temporal Variation in Selection Influences Microgeographic Local Adaptation},
@@ -79,7 +137,7 @@
   doi = {10.1086/725865}
   }
 
-@INCOLLECTION{Doy23,
+@incollection{Doy23,
   author = {Doyle, Kathleen},
   title = {The {Q}ueen {M}ary {P}salter},
   pages = {61--70},
@@ -90,7 +148,14 @@
   year = 2023
   }
 
-@ARTICLE{DMD22,
+@incollection{Dra87,
+  author = {Joan E. Draper},
+  title = {Paris by the Lake: Sources of {B}urnham's Plan of {C}hicago},
+  pages = {107--19},
+  crossref = {Zuk87}
+  }
+
+@article{DMD22,
   author = {Dror, Amiel A. and Morozov, Nicole and Daoud, Amani and others},
   year = 2022,
   title = {Pre-Infection 25-Hydroxyvitamin {D3} Levels and Association with Severity of {COVID-19} Illness},
@@ -103,7 +168,26 @@
   doi = {10.1371/journal.pone.0263069}
   }
 
-@MISC{Goo23,
+@article{Edi06,
+  key = {Editorial},
+  title = {Editorial: ``{W}hat is a Disaster'' and Why does this Question Matter?},
+  year = 2006,
+  journal = {Journal of Contingencies and Crisis Management},
+  volume = 14,
+  pages = {1--2}
+  }
+
+@article{Goo99,
+  editor = {Good, Thomas L.},
+  title = {Non-Subject-Matter Outcomes of Schooling},
+  note = {Special issue},
+  journal = {Elementary School Journal},
+  volume = 99,
+  number = 5,
+  year = 1999
+  }
+
+@misc{Goo23,
   author = {Google},
   year = 2023,
   title = {Privacy Policy},
@@ -111,7 +195,7 @@
   url = {https://policies.google.com/privacy}
   }
 
-@ARTICLE{Heb25,
+@article{Heb25,
   author = {Hebert, B. T.},
   title = {The Island of {B}ols{\"o}: A Study of {N}orwegian Life},
   journal = {Sociological Review},
@@ -122,15 +206,15 @@
   note = {EBSCOhost}
   }
 
-@ARTICLE{Jac23,
+@article{Jac23,
   author = {Jacobs, Alexandra},
   year = 2023,
-  title = {`The Muchness of {M}adonna.' Review of \emph{Madonna: A Rebel Life}, by Mary Gabriel},
+  title = {{`The Muchness of Madonna.' Review of \emph{Madonna: A Rebel Life}, by Mary Gabriel}},
   journal = {New York Times},
   month = oct # "~8"
   }
 
-@ARTICLE{Kle23,
+@article{Kle23,
   author = {Klein, Elana},
   year = 2023,
   title = {Meet {F}lip, the Viral Video App Giving Away Free Stuff},
@@ -139,7 +223,7 @@
   url = {https://www.wired.com/story/flip-viral-video-app-shopping-free-stuff/}
   }
 
-@BOOK{KuLe87,
+@book{KuLe87,
   editor = {Kurland, Philip B. and Lerner, Ralph},
   title = {The Founders' Constitution},
   address = {Chicago, IL},
@@ -148,7 +232,7 @@
   year = 1987
   }
 
-@ARTICLE{Kwo22,
+@article{Kwo22,
   author = {Kwon, Hyeyoung},
   year = 2022,
   title = {Inclusion Work: Children of Immigrants Claiming Membership in Everyday Life},
@@ -159,7 +243,7 @@
   doi = {10.1086/720277}
   }
 
-@ARTICLE{Lin23,
+@article{Lin23,
   author = {Lindquist, Benjamin},
   year = 2023,
   title = {The Art of Text-to-Speech},
@@ -170,7 +254,7 @@
   doi = {10.1086/727651}
   }
 
-@BOOK{Liu21,
+@book{Liu21,
   author = {Liu, Xinwu},
   title = {The Wedding Party},
   publisher = {Amazon Crossing},
@@ -178,7 +262,15 @@
   year = 2021
   }
 
-@BOOK{MaPa23,
+@book{Lon25,
+  author = {Longo, Dan and Fauci, Anthony S. and Kasper, Dennis L. and Hauser, Stephen and Jameson, J. Larry and Loscalzo, Joseph and Holland, Steven M. and Langford, Carol A.},
+  year = {Forthcoming 2025},
+  title = {Harrison's Principles of Internal Medicine},
+  edition = 22,
+  publisher = {McGraw-Hill Medical}
+  }
+
+@book{MaPa23,
   editor = {Marks, P. J. M. and Parkin, Stephen},
   title = {The Book by Design: The Remarkable Story of the World's Greatest Invention},
   address = {Chicago, IL},
@@ -186,7 +278,7 @@
   year = 2023
   }
 
-@ARTICLE{Mea23,
+@magazine{Mea23,
   author = {Mead, Rebecca},
   year = 2023,
   title = {Terms of Aggrievement},
@@ -194,7 +286,7 @@
   month = dec # "~18"
   }
 
-@BOOK{Mel51,
+@book{Mel51,
   author = {Melville, Herman},
   title = {Moby-{Dick}; or, The Whale},
   publisher = {New York},
@@ -202,7 +294,18 @@
   year = 1851
   }
 
-@MISC{NAS22,
+@techreport{Mor88,
+  author = {Moray, N. P. and Huey, B. M.},
+  year = 1988,
+  title = {Human Factors Research and Nuclear Safety},
+  address = {Washington, DC},
+  institution = {National Academy Press},
+  type = {Contract},
+  number = {No.: NRC-04-86-301},
+  note = {Available from: NTIS, Springfield, VA; PB89-175517. Sponsored by the Nuclear Regulatory Commission}
+  }
+
+@misc{NAS22,
   author = {{NASA Webb Telescope}},
   collaboration = {@NASAWebb},
   year = 2022,
@@ -212,7 +315,7 @@
   url = {https://www.twitter.com/NASAWebb/status/1546621080298835970}
   }
 
-@MISC{Oli22,
+@misc{Oli22,
   author = {Oliver, Eric},
   year = 2022,
   title = {Why So Many {A}mericans Believe in So Many `Crazy' Things},
@@ -220,7 +323,7 @@
   url = {https://www.youtu.be/hfq}
   }
 
-@ARTICLE{Peg07,
+@article{Peg07,
   author = {Pegoraro, Rob},
   year = 2007,
   title = {Apple's i{P}hone Is Sleek, Smart and Simple},
@@ -229,7 +332,15 @@
   note = {LexisNexis Academic}
   }
 
-@BOOK{Roy08,
+@unpublished{Roh08,
+  author = {Rohde, Hannah and Roger Levy and Andrew Kehler},
+  year = 2008,
+  month = mar,
+  title = {Implicit Causality Biases Influence Relative Clause Attachment},
+  note = {Poster presented at the 21st CUNY Conference on Human Sentence Processing; Chapel Hill, NC}
+  }
+
+@book{Roy08,
   author = {Roy, Arundhati},
   year = 2008,
   title = {The God of Small Things},
@@ -237,7 +348,14 @@
   note = {Kindle}
   }
 
-@MISC{Wik23,
+@manual{who93,
+  organization = {World Health Organization},
+  title = {{WHO} Editorial Style Manual},
+  address = {Geneva},
+  year = 1993
+  }
+
+@misc{Wik23,
   key = {Wikimedia Foundation},
   year = 2023,
   title = {Wikipedia: Manual of Style},
@@ -245,17 +363,26 @@
   url = {https://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style}
   }
 
-@MISC{YalND,
+@misc{YalND,
   author = {{Yale University}},
   title = {About {Y}ale: {Y}ale Facts},
   lastchecked = mar # "~8, 2022",
   url = {https://www.yale.edu/about-yale/yale-facts}
   }
 
-@BOOK{Yu20,
+@book{Yu20,
   author = {Yu, Charles},
   title = {Interior {C}hinatown},
   publisher = {Pantheon Books},
   address = {New York},
   year = 2020
+  }
+
+@book{Zuk87,
+  editor = {Zukowsky, John},
+  year = 1987,
+  title = {Chicago Architecture, 1872--1922: Birth of a Metropolis},
+  booktitle = {Chicago Architecture, 1872--1922: Birth of a Metropolis},
+  address = {Munich},
+  publisher = {Prestel-Verlag in association with the Art Institute of Chicago}
   }

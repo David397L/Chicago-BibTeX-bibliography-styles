@@ -589,6 +589,7 @@ FUNCTION {format.editors.secondary}
 FUNCTION {format.translators.secondary}
 %
 % Translators in secondary position in {book} and {inbook}
+% when there is an author in primary position.
 %
 { author empty$
     { "" }

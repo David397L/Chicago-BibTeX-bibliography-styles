@@ -1,8 +1,8 @@
 %%% ====================================================================
 %%%  @BibTeX-style-file{
 %%%     author          = "David Lamkin",
-%%%     version         = "B.04",
-%%%     date            = "5 December 2025",
+%%%     version         = "B.05",
+%%%     date            = "16 May 2026",
 %%%     filename        = "chicago18ad.bst",
 %%%     address         = "",
 %%%     checksum        = "",
@@ -10,8 +10,9 @@
 %%%     supported       = "yes",
 %%%     abstract        = "The file produces bibliographies more or
 %%%                        less in Chicago author-date (eighteenth 
-%%%                        edition) format. 
-%%%                        It incorporates features of Glenn Paulley's 
+%%%                        edition) format. It was
+%%%                        adapted from Patrick W. Daly's plainnat.bst,
+%%%                        incorporating features of Glenn Paulley's 
 %%%                        chicago.bst, Matt Swift's achicago.bst and 
 %%%                        Patrick W. Daly and Arthur Ogawa's merlin.mbs".
 %%%
@@ -30,9 +31,9 @@
 %%%  }
 %%% ====================================================================
 %
-% BibTeX `chicago18ad' bibliography style (05-Dec-25 version)
+% BibTeX `chicago18ad' bibliography style (16-May-26 version)
 % An adaptation of the `plainnat' style, for use with the natbib package.
-% Copyright (C) 2025, all rights reserved.
+% Copyright (C) 2025, 2026, all rights reserved.
 % Copying of this file is allowed, provided that if you make any changes at all
 % you name it something other than `chicago18ad.bst'. 
 % This restriction helps ensure that all copies are identical.
@@ -40,7 +41,7 @@
 % This style should be used with the `natbib' LaTeX style (natbib.sty).
 % The form of the \bibitem entries is
 %   \bibitem[Jones et al.(1990)]{key}...
-%   \bibitem[Jones et al.(1990)Jones, Baker and Smith]{key}...
+%   \bibitem[Jones et al.(1990)Jones, Baker, and Smith]{key}...
 % The essential feature is that the label (the part in brackets) consists
 % of the author names, as they should appear in the citation, with the year
 % in parentheses following. There must be no space before the opening
@@ -75,8 +76,8 @@ ENTRY
     publisher
     school
     series
-    serieseditor
     title
+    translator
     type
     url
     urldate
@@ -247,6 +248,15 @@ FUNCTION {bbl.editor}
 
 FUNCTION {bbl.edby}
 { "edited by" }
+
+FUNCTION {bbl.translators}
+{ "trans" }
+
+FUNCTION {bbl.translator}
+{ "trans" }
+
+FUNCTION {bbl.transby}
+{ "translated by" }
 
 FUNCTION {bbl.edition}
 { "ed" }	
@@ -501,8 +511,8 @@ FUNCTION {format.key}
 
 FUNCTION {format.editors.firstfirst}
 %
-% Format editor names for use in inbook, incollection, inproceedings: 
-% first name followed by surname every time.
+% Format editor names for use in {book}, {inbook}, {incollection}, 
+% {inproceedings}: first name followed by surname every time.
 % When editors are the LABEL for an entry, then format.editors 
 % is used, which lists the first editor surname first.
 %
@@ -511,9 +521,6 @@ FUNCTION {format.editors.firstfirst}
     { editor "editor" format.names.firstfirst }
   if$
 }
-
-FUNCTION {get.bbl.editor}
-{ editor num.names$ #1 > 'bbl.editors 'bbl.editor if$ }
 
 FUNCTION {format.editors}
 { editor empty$
@@ -532,9 +539,29 @@ FUNCTION {format.editors.primary}
 % Editors in primary position in {book} and {inbook}
 % when there is no author.
 %
-{ editor "editor" format.names duplicate$ empty$ 'skip$
-    {
-      ", " * get.bbl.editor *
+{ editor empty$
+    { "" }
+    { editor "editor" format.names
+      editor num.names$ #1 >
+        { ", " * bbl.editors * }
+        { ", " * bbl.editor * }
+      if$
+    }
+  if$
+}
+
+FUNCTION {format.translators.primary}
+%
+% Translators in primary position in {book} and {inbook}
+% when there is no author.
+%
+{ translator empty$
+    { "" }
+    { translator "translator" format.names
+      translator num.names$ #1 >
+        { ", " * bbl.translators * }
+        { ", " * bbl.translator * }
+      if$
     }
   if$
 }
@@ -559,27 +586,51 @@ FUNCTION {format.editors.secondary}
   if$
 }
 
-FUNCTION {format.serieseditors}
+FUNCTION {format.translators.secondary}
 %
-% The editor of a book series (not an individual volume). 
-% The name of the series editor is usually omitted. 
-% When included, it directly follows the series title,
-% after a comma, without capitalizing "edited by".
+% Translators in secondary position in {book} and {inbook}
+% Separate editors and translators is a temporary solution;
+% ultimately they might be combined into one function.
 %
-{ serieseditor empty$
+{ author empty$
     { "" }
-    { author empty$
+    { translator empty$
         { "" }
-        { serieseditor "editor" format.names.firstfirst
-          serieseditor num.names$ #1 >
-            { bbl.edby " " * swap$ * }
-            { bbl.edby " " * swap$ * }
+        { translator "translator" format.names.firstfirst
+          translator num.names$ #1 >
+            { bbl.transby capitalize " " * swap$ * }
+            { bbl.transby capitalize " " * swap$ * }
           if$
         }
       if$
     }
   if$
-  mid.sentence 'output.state :=
+}
+
+
+FUNCTION {format.translators.incollection}
+%
+% Translators in secondary/tertiary(?) position in {incollection}
+% Separate editors and translators is a temporary solution;
+% ultimately they might be combined into one function
+%
+{ editor empty$
+    { "" }
+    { author empty$
+        { "" }
+        { translator empty$
+            { "" }
+            { translator "translator" format.names.firstfirst
+              translator num.names$ #1 >
+                { bbl.transby capitalize " " * swap$ * }
+                { bbl.transby capitalize " " * swap$ * }
+              if$
+            }
+          if$
+        }
+      if$
+    }
+  if$
 }
 
 FUNCTION {urldate.check}
@@ -687,6 +738,11 @@ FUNCTION {format.full.names}
 }
 
 FUNCTION {author.editor.full}
+%
+% This gives only ``Translator et al.'' when there are more 
+% than two (primary) translators; fix in a future release?
+% Should be author.editor.translator.full ?
+%
 { author empty$
     { editor empty$
         { "" }
@@ -714,6 +770,7 @@ FUNCTION {editor.full}
 FUNCTION {make.full.names}
 %
 % Include the extended list of entry types here?
+% And author.editor.translator.full if we make it...
 %
 { type$ "book" =
   type$ "inbook" =
@@ -1460,6 +1517,7 @@ FUNCTION {book}
 { output.bibitem
   author empty$
     { format.editors.primary "author and editor" output.check
+      format.translators.primary output
       editor format.key output
     }
     { format.authors output.nonnull
@@ -1478,8 +1536,9 @@ FUNCTION {book}
       new.sentence
       format.editors.secondary output
       new.sentence
+      format.translators.secondary output
+      new.sentence
       format.number.series output
-      format.serieseditors output
       new.sentence
       publisher "publisher" output.check
     }
@@ -1516,6 +1575,7 @@ FUNCTION {inbook}
 { output.bibitem
   author empty$
     { format.editors.primary "author and editor" output.check
+      format.translators.primary output
       editor format.key output
     }
     { format.authors output.nonnull
@@ -1534,8 +1594,9 @@ FUNCTION {inbook}
       new.sentence
       format.editors.secondary output
       new.sentence
+      format.translators.secondary output
+      new.sentence
       format.number.series output
-      format.serieseditors output
       new.sentence
       publisher "publisher" output.check
       new.sentence
@@ -1566,8 +1627,9 @@ FUNCTION {incollection}
       new.sentence
       format.bvolume output
       new.sentence
+      format.translators.incollection output
+      new.sentence
       format.number.series output
-      format.serieseditors output
       new.sentence
       publisher "publisher" output.check
     }
@@ -1770,6 +1832,19 @@ FUNCTION {unpublished}
 
 FUNCTION {default.type} { misc }
 
+MACRO {jan} {"January"}
+MACRO {feb} {"February"}
+MACRO {mar} {"March"}
+MACRO {apr} {"April"}
+MACRO {may} {"May"}
+MACRO {jun} {"June"}
+MACRO {jul} {"July"}
+MACRO {aug} {"August"}
+MACRO {sep} {"September"}
+MACRO {oct} {"October"}
+MACRO {nov} {"November"}
+MACRO {dec} {"December"}
+
 MACRO {acmcs} {"ACM Computing Surveys"}
 MACRO {acta} {"Acta Informatica"}
 MACRO {cacm} {"Communications of the ACM"}
@@ -1791,19 +1866,6 @@ MACRO {toms} {"ACM Transactions on Mathematical Software"}
 MACRO {toois} {"ACM Transactions on Office Information Systems"}
 MACRO {toplas} {"ACM Transactions on Programming Languages and Systems"}
 MACRO {tcs} {"Theoretical Computer Science"}
-
-MACRO {jan} {"January"}
-MACRO {feb} {"February"}
-MACRO {mar} {"March"}
-MACRO {apr} {"April"}
-MACRO {may} {"May"}
-MACRO {jun} {"June"}
-MACRO {jul} {"July"}
-MACRO {aug} {"August"}
-MACRO {sep} {"September"}
-MACRO {oct} {"October"}
-MACRO {nov} {"November"}
-MACRO {dec} {"December"}
 
 READ
 
@@ -1853,14 +1915,33 @@ FUNCTION {author.key.label}
   if$
 }
 
-FUNCTION {author.editor.key.label}
+%FUNCTION {author.editor.key.label}   % like plainnat
+%{ author empty$
+%    { editor empty$
+%        { key empty$
+%            { cite$ #1 #3 substring$ }
+%            'key
+%          if$
+%        }
+%        { editor format.lab.names }
+%      if$
+%    }
+%    { author format.lab.names }
+%  if$
+%}
+
+FUNCTION {author.editor.translator.key.label}   % translator added
 { author empty$
     { editor empty$
-        { key empty$
-            { cite$ #1 #3 substring$ }
-            'key	
+        { translator empty$
+            { key empty$
+                { cite$ #1 #3 substring$ }
+                'key	
+              if$
+            }
+            { translator format.lab.names }
           if$
-        }
+          }
         { editor format.lab.names }
       if$
     }
@@ -1869,10 +1950,6 @@ FUNCTION {author.editor.key.label}
 }
 
 FUNCTION {author.key.organization.label}
-%
-% Provide label formatting by key if author is null,
-% or by organization if key is also null.
-%
 { author empty$
     { key empty$
         { organization empty$
@@ -1889,10 +1966,6 @@ FUNCTION {author.key.organization.label}
 }
 
 FUNCTION {editor.key.organization.label}
-%
-% Provide label formatting by key if editor is null,
-% or by organization if key is also null.
-%
 { editor empty$
     { key empty$
         { organization empty$
@@ -1926,7 +1999,7 @@ FUNCTION {calc.short.authors}
       or
     or
   or
-    'author.editor.key.label
+    'author.editor.translator.key.label   % translator added
     { type$ "proceedings" =
     'editor.key.organization.label
        { type$ "manual" =
@@ -2008,14 +2081,35 @@ FUNCTION {author.sort}
   if$
 }
 
-FUNCTION {author.editor.sort}
+%FUNCTION {author.editor.sort}   % like plainnat
+%{ author empty$
+%    { editor empty$
+%        { key empty$
+%            { "to sort, need author, editor, or key in " cite$ * warning$
+%              ""
+%            }
+%            { key sortify }
+%          if$
+%        }
+%        { editor sort.format.names }
+%      if$
+%    }
+%    { author sort.format.names }
+%  if$
+%}
+
+FUNCTION {author.editor.translator.sort}   % translator added
 { author empty$
     { editor empty$
-        { key empty$
-            { "to sort, need author, editor, or key in " cite$ * warning$
-              ""
+        { translator empty$
+            { key empty$
+                { "to sort, need author, editor, translator, or key in " cite$ * warning$
+                  ""
+                }
+                { key sortify }
+              if$
             }
-            { key sortify }
+            { translator sort.format.names }
           if$
         }
         { editor sort.format.names }
@@ -2081,7 +2175,7 @@ FUNCTION {presort}
       or
     or
   or
-    'author.editor.sort
+    'author.editor.translator.sort   % translator added
     { type$ "proceedings" =
         'editor.organization.sort
         { type$ "manual" =

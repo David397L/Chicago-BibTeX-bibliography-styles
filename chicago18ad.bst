@@ -589,8 +589,6 @@ FUNCTION {format.editors.secondary}
 FUNCTION {format.translators.secondary}
 %
 % Translators in secondary position in {book} and {inbook}
-% Separate editors and translators is a temporary solution;
-% ultimately they might be combined into one function.
 %
 { author empty$
     { "" }
@@ -607,12 +605,9 @@ FUNCTION {format.translators.secondary}
   if$
 }
 
-
 FUNCTION {format.translators.incollection}
 %
 % Translators in secondary/tertiary(?) position in {incollection}
-% Separate editors and translators is a temporary solution;
-% ultimately they might be combined into one function
 %
 { editor empty$
     { "" }

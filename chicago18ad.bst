@@ -1,8 +1,8 @@
 %%% ====================================================================
 %%%  @BibTeX-style-file{
 %%%     author          = "David Lamkin",
-%%%     version         = "B.05",
-%%%     date            = "16 May 2026",
+%%%     version         = "B.06",
+%%%     date            = "21 May 2026",
 %%%     filename        = "chicago18ad.bst",
 %%%     address         = "",
 %%%     checksum        = "",
@@ -31,7 +31,7 @@
 %%%  }
 %%% ====================================================================
 %
-% BibTeX `chicago18ad' bibliography style (16-May-26 version)
+% BibTeX `chicago18ad' bibliography style (21-May-26 version)
 % An adaptation of the `plainnat' style, for use with the natbib package.
 % Copyright (C) 2025, 2026, all rights reserved.
 % Copying of this file is allowed, provided that if you make any changes at all
@@ -244,7 +244,7 @@ FUNCTION {bbl.editors}
 { "eds" }
 
 FUNCTION {bbl.editor}
-{ "ed" }
+{ "ed." }
 
 FUNCTION {bbl.edby}
 { "edited by" }
@@ -253,7 +253,7 @@ FUNCTION {bbl.translators}
 { "trans" }
 
 FUNCTION {bbl.translator}
-{ "trans" }
+{ "trans." }
 
 FUNCTION {bbl.transby}
 { "translated by" }
@@ -534,33 +534,44 @@ FUNCTION {format.editors}
   if$
 }
 
-FUNCTION {format.editors.primary}
+FUNCTION {format.editors.translators.primary}
 %
-% Editors in primary position in {book} and {inbook}
+% Editors and/or translators in primary position in {book} and {inbook}
 % when there is no author.
 %
 { editor empty$
-    { "" }
+    { translator empty$
+        { "" }
+        { translator "translator" format.names
+          translator num.names$ #1 >
+            { ", " * bbl.translators * }
+            { ", " * bbl.translator * }
+          if$
+        }
+      if$
+    }
     { editor "editor" format.names
       editor num.names$ #1 >
         { ", " * bbl.editors * }
         { ", " * bbl.editor * }
       if$
-    }
-  if$
-}
-
-FUNCTION {format.translators.primary}
-%
-% Translators in primary position in {book} and {inbook}
-% when there is no author.
-%
-{ translator empty$
-    { "" }
-    { translator "translator" format.names
-      translator num.names$ #1 >
-        { ", " * bbl.translators * }
-        { ", " * bbl.translator * }
+      translator empty$
+        'skip$
+        { editor translator =
+            { editor num.names$ #1 >
+                { " " * bbl.and * " " * bbl.translators * }
+                { " " * bbl.and * " " * bbl.translator * }
+              if$
+            }
+            { "; " *
+              translator "translator" format.names *
+              translator num.names$ #1 >
+                { ", " * bbl.translators * }
+                { ", " * bbl.translator * }
+              if$
+            }
+          if$
+        }
       if$
     }
   if$
@@ -1512,8 +1523,7 @@ FUNCTION {newspaper} { article }
 FUNCTION {book}
 { output.bibitem
   author empty$
-    { format.editors.primary "author and editor" output.check
-      format.translators.primary output
+    { format.editors.translators.primary "author and editor" output.check
       editor format.key output
     }
     { format.authors output.nonnull
@@ -1570,8 +1580,7 @@ FUNCTION {booklet}
 FUNCTION {inbook}
 { output.bibitem
   author empty$
-    { format.editors.primary "author and editor" output.check
-      format.translators.primary output
+    { format.editors.translators.primary "author and editor" output.check
       editor format.key output
     }
     { format.authors output.nonnull

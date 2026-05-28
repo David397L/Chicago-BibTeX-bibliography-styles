@@ -1,6 +1,6 @@
 # Chicago author-date BibTeX bibliography style file
 
-chicago18ad.bst is a new BibTeX bibliography style for the Chicago author-date (eighteenth edition) citation style.
+chicago18ad.bst is a BibTeX bibliography style for the Chicago author-date (eighteenth edition) citation style.
 
 The initial development goal (en route to a full implementation) is to match as closely as possible the description of the style given at 
 https://www.chicagomanualofstyle.org/tools_citationguide/citation-guide-2.html

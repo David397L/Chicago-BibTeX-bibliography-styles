@@ -7,7 +7,7 @@ https://www.chicagomanualofstyle.org/tools_citationguide/citation-guide-2.html
 
 This is the most recent (2024) edition of the Chicago manual of style.
 
-The style file contains support for including DOIs/URLs and for citing online/news articles and edited/translated books.
+The style file contains support for including DOIs/URLs and for citing online/news articles, web pages and edited/translated books.
 
 I'm aware that some publications may request a Chicago author-date format without quotation marks around the titles of journal articles, book chapters, etc., and for these titles in Sentence case instead of Title Case. To that end, feedback and suggestions are always welcome. I have not overlooked the "notes and bibliography" version, although I think that might take me a little while yet.
 

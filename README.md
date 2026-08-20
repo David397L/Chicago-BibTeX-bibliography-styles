@@ -9,8 +9,6 @@ This is the most recent (2024) edition of the Chicago manual of style.
 
 The style file contains support for including DOIs/URLs and for citing online/news articles, web pages and edited/translated books.
 
-A more user-friendly instruction guide is on its way, which will include illustrated examples of the new functionalities.
-
 I'm aware that some publications may request a Chicago author-date format without quotation marks around the titles of journal articles, book chapters, etc., and for these titles in Sentence case instead of Title Case. To that end, feedback and suggestions are always welcome. I have not overlooked the "notes and bibliography" version, although I think that might take me a little while yet.
 
 So, if you do use this file, please consider giving me a star if you liked the results, or let me know if you didn't. If you would like to develop anything further, please make a pull request.

@@ -1,8 +1,8 @@
 %%% ====================================================================
 %%%  @BibTeX-style-file{
 %%%     author          = "David Lamkin",
-%%%     version         = "B.07",
-%%%     date            = "2 July 2026", 
+%%%     version         = "B.08",
+%%%     date            = "20 August 2026",
 %%%     filename        = "chicago18ad.bst",
 %%%     address         = "",
 %%%     checksum        = "",
@@ -32,7 +32,7 @@
 %%%  }
 %%% ====================================================================
 %
-% BibTeX `chicago18ad' bibliography style (02-Jul-26 version)
+% BibTeX `chicago18ad' bibliography style (20-Aug-26 version)
 % An adaptation of the `plainnat' style, for use with the natbib package.
 % Copyright (C) 2025, 2026, all rights reserved.
 % Copying of this file is allowed, provided that if you make any changes at all
@@ -50,7 +50,7 @@
 % \cite's come out like "(Jones 1990)" in the text but there are no labels
 % in the bibliography, and something like "1990" comes out immediately
 % after the author. A `year' field is required for every entry, and so is 
-% either an author (or an editor) field or a key field.
+% either an author (or an editor, or a translator) field or a key field.
 %
 
 ENTRY
@@ -303,7 +303,7 @@ FUNCTION {bbl.mthesis}
 { "Master's thesis" }
 
 FUNCTION {bbl.phdthesis}
-{ "PhD diss." }
+{ "PhD dissertation" }
 
 FUNCTION {bbl.first}
 { "1st" }
@@ -413,8 +413,8 @@ FUNCTION {format.names}
     { namesleft #0 > }
     { s nameptr
       duplicate$ #1 >
-        { "{ff~}{vv~}{ll}{, jj}" }
-        { "{vv~}{ll}{, ff}{, jj}" }
+        { "{ff~}{vv~}{ll}{ jj}" }
+        { "{vv~}{ll}{, ff}{ jj}" }
       if$
       format.name$
       bibinfo bibinfo.check
@@ -466,7 +466,7 @@ FUNCTION {format.names.firstfirst}
   numnames 'namesleft :=
     { namesleft #0 > }
     { s nameptr
-      "{ff~}{vv~}{ll}{, jj}"
+      "{ff~}{vv~}{ll}{ jj}"
       format.name$
       bibinfo bibinfo.check
       't :=
@@ -635,9 +635,7 @@ FUNCTION {format.translators.secondary}
 
 FUNCTION {format.translators.incollection}
 %
-% Translators in secondary/tertiary(?) position in {incollection}
-% There may be ambiguity in this, as regards whether the translator
-% has translated the chapter being cited or the entire collection
+% Translators in {incollection}
 %
 { editor empty$
     { "" }
@@ -777,15 +775,17 @@ FUNCTION {format.full.names}
   while$
 }
 
-FUNCTION {author.editor.full}
+FUNCTION {author.editor.translator.full}
 %
-% This gives only ``Translator et al.'' when there are more 
-% than two (primary) translators; fix in a future release?
-% Should be author.editor.translator.full ?
+% Extended to include translators' full.names in \cite*{} commands
 %
 { author empty$
     { editor empty$
-        { "" }
+        { translator empty$
+            { "" }
+            { translator format.full.names }
+          if$
+        }
         { editor format.full.names }
       if$
     }
@@ -809,13 +809,13 @@ FUNCTION {editor.full}
 
 FUNCTION {make.full.names}
 %
-% Include the extended list of entry types here?
-% And author.editor.translator.full if we make it...
+% Extended to include translators' full.names in \cite*{} commands
+% Add the extended list of entry types here too?
 %
 { type$ "book" =
   type$ "inbook" =
   or
-    'author.editor.full
+    'author.editor.translator.full
     { type$ "proceedings" =
         'editor.full
         'author.full
@@ -870,15 +870,21 @@ FUNCTION {word.in}
 
 FUNCTION {format.date}
 { year "year" bibinfo.check duplicate$ empty$
-    {
-      "empty year in " cite$ * "; set to n.d." * warning$
-       pop$ "{n.d.}"
-    }
+    { "empty year in " cite$ * "; set to n.d." * warning$
+       pop$ "{n.d.}" }
     'skip$
   if$
   extra.label *
   before.all 'output.state := 
   after.sentence 'output.state := 
+}
+
+FUNCTION {format.month}
+{ month empty$
+    { "" }
+    { month "month" bibinfo.check
+    "" swap$ * "" * }
+  if$
 }
 
 FUNCTION {is.num}
@@ -949,30 +955,30 @@ FUNCTION {format.edition}
 
 FUNCTION {format.btitle}
 { edition empty$
-  { title emphasize }
-  { title empty$
     { title emphasize }
-    { volume empty$
-        { "\emph{" title * "}. " * format.edition * "." * }
-        { "\emph{" title * "}. " * format.edition * }
+    { title empty$
+        { title emphasize }
+        { volume empty$
+            { "\emph{" title * "}. " * format.edition * "." * }
+            { "\emph{" title * "}. " * format.edition * }
+        if$
+        }
       if$
-      }
-    if$
     }
   if$
 }
 
 FUNCTION {format.emphasize.booktitle}
 { edition empty$
-  { booktitle emphasize }
-  { booktitle empty$
     { booktitle emphasize }
-    { volume empty$
-        { "\emph{" booktitle * "}, " * format.edition * "." * }
-        { "\emph{" booktitle * "}, " * format.edition * }
+    { booktitle empty$
+        { booktitle emphasize }
+        { volume empty$
+            { "\emph{" booktitle * "}, " * format.edition * "." * }
+            { "\emph{" booktitle * "}, " * format.edition * }
+        if$
+        }
       if$
-      }
-    if$
     }
   if$
 }
@@ -1013,8 +1019,8 @@ FUNCTION {either.or.both.check}
 
 FUNCTION {format.bvolume}
 { volume empty$
-    { " " }
-    { bbl.volume capitalize volume tie.or.space.prefix
+    { "" }
+    { bbl.volume volume tie.or.space.prefix
       "volume" bibinfo.check * *
       series "series" bibinfo.check
       duplicate$ empty$ 'pop$
@@ -1024,6 +1030,13 @@ FUNCTION {format.bvolume}
     }
   if$
 }
+
+%
+% Series + volume = multivolume work: Series Title italicized
+% Series string not capitalized so stays in Title Case as typed
+% Vol. is capitalized at format.bvolume in each book function
+% Without volume, or with number, Series Title is in upright font
+%
 
 FUNCTION {format.number.series}
 { volume empty$
@@ -1463,6 +1476,10 @@ FUNCTION {format.tr.number}
   if$
 }
 
+FUNCTION {format.address}
+{ address "address" bibinfo.check
+}
+
 FUNCTION {format.article.crossref}
 { word.in
   " \cite{" * crossref * "}" *
@@ -1483,21 +1500,6 @@ FUNCTION {format.book.crossref}
 FUNCTION {format.incoll.inproc.crossref}
 { word.in			
   " \cite{" * crossref * "}" *
-}
-
-FUNCTION {format.conference.address} 
-%
-% Occurs in {inproceedings} and {proceedings}
-%
-{ address "address" bibinfo.check
-}
-
-FUNCTION {format.month}
-{ month empty$
-    { "" }
-    { month "month" bibinfo.check
-    "" swap$ * "" * }
-  if$
 }
 
 FUNCTION {article}
@@ -1576,7 +1578,7 @@ FUNCTION {book}
   format.btitle "title" output.check
   new.sentence
   crossref missing$
-    { format.bvolume output
+    { format.bvolume capitalize output
       new.sentence
       format.editors.secondary output
       new.sentence
@@ -1635,7 +1637,7 @@ FUNCTION {inbook}
   format.btitle "title" output.check
   new.sentence
   crossref missing$
-    { format.bvolume output
+    { format.bvolume capitalize output
       new.sentence
       format.editors.secondary output
       new.sentence
@@ -1646,7 +1648,6 @@ FUNCTION {inbook}
       format.number.series output
       new.sentence
       publisher "publisher" output.check
-      new.sentence
       format.chapter.pages "chapter and pages" output.check
     }
     { format.chapter.pages "chapter and pages" output.check
@@ -1669,12 +1670,12 @@ FUNCTION {incollection}
   new.block
   format.title "title" output.check
   end.quote.title
+  format.translators.incollection add.period$ output
+  add.blank
   crossref missing$
     { format.in.ed.booktitle "booktitle" output.check
       new.sentence
-      format.bvolume output
-      new.sentence
-      format.translators.incollection output
+      format.bvolume capitalize output
       new.sentence
       format.illustrators.secondary output
       new.sentence
@@ -1703,10 +1704,11 @@ FUNCTION {inproceedings}
   end.quote.title
   crossref missing$
     { format.in.ed.booktitle "booktitle" output.check
-      format.bvolume output
-      format.month output
-      format.conference.address output
       new.sentence
+      format.month output
+      format.address output
+      new.sentence
+      format.bvolume capitalize output
       organization output
       publisher output
       format.pages "pages" output.check
@@ -1797,6 +1799,10 @@ FUNCTION {misc}
   fin.entry
 }
 
+FUNCTION {online} { misc }
+%
+% Allow @online as an alias for @misc
+%
 FUNCTION {webpage} { misc }
 %
 % Allow @webpage as an alias for @misc
@@ -1826,9 +1832,11 @@ FUNCTION {proceedings}
   format.date "year" output.check
   new.block
   format.btitle "title" output.check
-  format.bvolume output
+  new.sentence
   format.month output
-  format.conference.address output
+  format.address output
+  new.sentence
+  format.bvolume capitalize output
   new.sentence
   organization output
   publisher output
@@ -1851,7 +1859,6 @@ FUNCTION {techreport}
   format.title "title" output.check
   end.quote.title
   format.tr.number output.nonnull
-  new.sentence
   institution "institution" output.check
   address output
   new.sentence
@@ -2014,8 +2021,9 @@ FUNCTION {editor.key.organization.label}
 
 FUNCTION {calc.short.authors}
 %
-% Includes "article" and "misc" which have had an editor option added,
-% and alias entry types "magazine", "newspaper", "periodical" and "webpage".
+% Includes "article" and "misc", which have had an editor option added,
+% plus alias entry types "magazine", "newspaper", "online", "periodical"
+% and "webpage".
 %
 { type$ "article" =
     type$ "book" =
@@ -2023,8 +2031,10 @@ FUNCTION {calc.short.authors}
         type$ "magazine" =
           type$ "misc" =
             type$ "newspaper" =
-              type$ "periodical" =
-                type$ "webpage" =
+              type$ "online" =
+                type$ "periodical" =
+                  type$ "webpage" =
+                or
               or
             or
           or
@@ -2171,8 +2181,9 @@ FUNCTION {editor.organization.sort}
 
 FUNCTION {presort}
 %
-% Includes "article" and "misc" which have had an editor option added,
-% and alias entry types "magazine", "newspaper", "periodical" and "webpage".
+% Includes "article" and "misc", which have had an editor option added,
+% plus alias entry types "magazine", "newspaper", "online", "periodical"
+% and "webpage".
 %
 { calc.label
   label sortify
@@ -2184,8 +2195,10 @@ FUNCTION {presort}
         type$ "magazine" =
           type$ "misc" =
             type$ "newspaper" =
-              type$ "periodical" =
-                type$ "webpage" =
+              type$ "online" =
+                type$ "periodical" =
+                  type$ "webpage" =
+                or
               or
             or
           or

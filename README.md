@@ -2,7 +2,7 @@
 
 chicago18ad.bst is a BibTeX bibliography style for the Chicago (18th edition) author-date citation style.
 
-The initial development goal (en route to a full implementation) is to match the description of the style at
+The initial development goal (en route to a full implementation) is to match as closely as possible the description of the style at
 https://www.chicagomanualofstyle.org/tools_citationguide/citation-guide-2.html
 
 This is the current (2024) edition of the Chicago manual of style.
